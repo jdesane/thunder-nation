@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>South Florida Thunder | Youth Travel Baseball & Softball</title>
+  <meta name="description" content="South Florida Thunder — a 501c3 youth travel baseball and softball organization based in North Palm Beach, FL. Powered by the Miami Marlins. Teams from 7U to 13U."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --surface2: #1a1a1a;
+      --border: #2a2a2a;
+      --gold: #FFB612;
+      --gold-dim: rgba(255,182,18,0.15);
+      --gold-br: rgba(255,182,18,0.3);
+      --gold-hi: #FFD24D;
+      --white: #ffffff;
+      --text: #e8e8e8;
+      --muted: #999999;
+      --dim: #666666;
+      --red: #e74c3c;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; height: 72px;
+      background: rgba(10,10,10,0.92); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--gold);
+      letter-spacing: 2px; display: flex; align-items: center; gap: 10px;
+    }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a {
+      font-family: 'DM Mono', monospace; font-size: 11px; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--muted); transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-dropdown { position: relative; }
+    .dropdown-trigger { cursor: pointer; }
+    .dropdown-menu {
+      display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+      background: rgba(17,17,17,0.98); backdrop-filter: blur(16px);
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 8px 0; min-width: 200px; margin-top: 12px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    }
+    .dropdown-menu::before {
+      content: ''; position: absolute; top: -12px; left: 0; right: 0; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu { display: block; }
+    .dropdown-menu a {
+      display: block; padding: 10px 20px; font-family: 'DM Mono', monospace;
+      font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px;
+      color: var(--muted); transition: all 0.2s; white-space: nowrap;
+    }
+    .dropdown-menu a:hover { color: var(--gold); background: rgba(255,182,18,0.05); }
+    .nav-cta {
+      background: var(--gold) !important; color: var(--bg) !important;
+      padding: 8px 20px !important; border-radius: 6px; font-weight: 600 !important;
+      transition: background 0.2s, transform 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--gold-hi) !important; transform: translateY(-1px); }
+
+    .hamburger {
+      display: none; background: none; border: none; cursor: pointer;
+      width: 28px; height: 20px; position: relative; z-index: 101;
+    }
+    .hamburger span {
+      display: block; width: 100%; height: 2px; background: var(--text);
+      position: absolute; left: 0; transition: all 0.3s;
+    }
+    .hamburger span:nth-child(1) { top: 0; }
+    .hamburger span:nth-child(2) { top: 9px; }
+    .hamburger span:nth-child(3) { top: 18px; }
+    .hamburger.open span:nth-child(1) { top: 9px; transform: rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { top: 9px; transform: rotate(-45deg); }
+
+    .mobile-menu {
+      display: none; position: fixed; top: 72px; left: 0; right: 0;
+      background: rgba(10,10,10,0.98); backdrop-filter: blur(16px);
+      padding: 24px 5%; flex-direction: column; gap: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: 'DM Mono', monospace; font-size: 13px; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--muted); padding: 8px 0;
+    }
+    .mobile-menu a:hover { color: var(--gold); }
+    .mobile-menu .nav-cta {
+      text-align: center; margin-top: 8px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      position: relative; padding: 120px 5% 80px; text-align: center;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(255,182,18,0.12) 0%, transparent 60%),
+        linear-gradient(180deg, var(--bg) 0%, rgba(10,10,10,0.6) 40%, var(--bg) 100%);
+      z-index: 1;
+    }
+    .hero::after {
+      content: ''; position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,182,18,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,182,18,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      z-index: 0;
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 900px; }
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace; font-size: 12px; text-transform: uppercase;
+      letter-spacing: 3px; color: var(--gold); margin-bottom: 20px;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .hero-eyebrow::before, .hero-eyebrow::after {
+      content: ''; width: 24px; height: 1px; background: var(--gold);
+    }
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif; font-size: clamp(52px, 8vw, 96px);
+      line-height: 0.95; color: var(--white); margin-bottom: 24px;
+      letter-spacing: 2px;
+    }
+    .hero h1 em { font-style: normal; color: var(--gold); }
+    .hero-sub {
+      font-size: 18px; color: var(--muted); max-width: 600px; margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+    .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--gold); color: var(--bg); font-family: 'DM Sans', sans-serif;
+      font-size: 15px; font-weight: 600; padding: 14px 32px; border-radius: 8px;
+      border: none; cursor: pointer; transition: all 0.25s;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-primary:hover { background: var(--gold-hi); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,182,18,0.3); }
+    .btn-outline {
+      background: transparent; color: var(--text); font-family: 'DM Sans', sans-serif;
+      font-size: 15px; font-weight: 500; padding: 14px 32px; border-radius: 8px;
+      border: 1px solid var(--border); cursor: pointer; transition: all 0.25s;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+    /* ── TICKER ── */
+    .ticker {
+      background: var(--gold); padding: 14px 0; overflow: hidden; position: relative;
+    }
+    .ticker-track {
+      display: flex; gap: 48px; animation: scroll-ticker 20s linear infinite;
+      white-space: nowrap;
+    }
+    .ticker-item {
+      font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 3px;
+      color: var(--bg); display: flex; align-items: center; gap: 12px;
+    }
+    .ticker-item::before { content: '⚾'; font-size: 12px; }
+    @keyframes scroll-ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ── SECTIONS ── */
+    .section { padding: 96px 5%; }
+    .section-inner { max-width: 1200px; margin: 0 auto; }
+    .section-label {
+      font-family: 'DM Mono', monospace; font-size: 11px; text-transform: uppercase;
+      letter-spacing: 3px; color: var(--gold); margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif; font-size: clamp(36px, 5vw, 56px);
+      color: var(--white); line-height: 1.05; margin-bottom: 16px;
+    }
+    .section-title em { font-style: normal; color: var(--gold); }
+    .section-sub {
+      font-size: 16px; color: var(--muted); max-width: 600px; line-height: 1.7;
+      margin-bottom: 48px;
+    }
+
+    /* ── ABOUT PREVIEW ── */
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+    }
+    .about-text p { color: var(--muted); font-size: 16px; line-height: 1.8; margin-bottom: 16px; }
+    .about-text p strong { color: var(--text); }
+    .about-stats {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+    }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 28px; text-align: center; transition: all 0.3s;
+    }
+    .stat-card:hover { border-color: var(--gold-br); transform: translateY(-4px); }
+    .stat-val {
+      font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--gold);
+      line-height: 1;
+    }
+    .stat-label {
+      font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase;
+      letter-spacing: 2px; color: var(--dim); margin-top: 8px;
+    }
+
+    /* ── TEAMS PREVIEW ── */
+    .teams-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px;
+    }
+    .team-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 32px 24px; text-align: center; transition: all 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .team-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-hi));
+    }
+    .team-card:hover { border-color: var(--gold-br); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+    .team-age {
+      font-family: 'Bebas Neue', sans-serif; font-size: 42px; color: var(--gold);
+      line-height: 1;
+    }
+    .team-name {
+      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+      color: var(--text); margin-top: 8px;
+    }
+    .team-divisions {
+      font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--dim); margin-top: 6px;
+    }
+
+    /* ── MARLINS SECTION ── */
+    .marlins-section { background: var(--surface); }
+    .marlins-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+    }
+    .marlins-badge {
+      width: 100%; aspect-ratio: 4/3; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Bebas Neue', sans-serif; font-size: 28px;
+      color: var(--dim); letter-spacing: 4px;
+    }
+    .marlins-text h3 {
+      font-family: 'Bebas Neue', sans-serif; font-size: 40px; color: var(--white);
+      line-height: 1.1; margin-bottom: 20px;
+    }
+    .marlins-text h3 em { font-style: normal; color: var(--gold); }
+    .marlins-text p { color: var(--muted); font-size: 16px; line-height: 1.8; margin-bottom: 16px; }
+    .highlight-list { list-style: none; padding: 0; margin-top: 24px; }
+    .highlight-list li {
+      display: flex; align-items: flex-start; gap: 12px;
+      font-size: 14px; color: var(--text); padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .highlight-list li::before {
+      content: '⚡'; font-size: 16px; flex-shrink: 0;
+    }
+
+    /* ── CULTURE / VALUES ── */
+    .values-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    }
+    .value-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 36px 28px; transition: all 0.3s;
+    }
+    .value-card:hover { border-color: var(--gold-br); transform: translateY(-4px); }
+    .value-icon {
+      font-size: 32px; margin-bottom: 16px;
+    }
+    .value-card h3 {
+      font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: var(--white);
+      margin-bottom: 10px;
+    }
+    .value-card p { color: var(--muted); font-size: 14px; line-height: 1.7; }
+
+    /* ── CTA BANNER ── */
+    .cta-banner {
+      background: linear-gradient(135deg, rgba(255,182,18,0.1) 0%, rgba(255,182,18,0.03) 100%);
+      border: 1px solid var(--gold-br); border-radius: 20px;
+      padding: 64px 48px; text-align: center; max-width: 900px; margin: 0 auto;
+    }
+    .cta-banner h2 {
+      font-family: 'Bebas Neue', sans-serif; font-size: clamp(36px, 4vw, 52px);
+      color: var(--white); margin-bottom: 16px;
+    }
+    .cta-banner h2 em { font-style: normal; color: var(--gold); }
+    .cta-banner p { color: var(--muted); font-size: 16px; margin-bottom: 32px; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--surface); border-top: 1px solid var(--border);
+      padding: 48px 5% 32px;
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 40px; align-items: start;
+    }
+    .footer-brand {
+      font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--gold);
+      letter-spacing: 2px;
+    }
+    .footer-brand p { font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--dim); margin-top: 8px; letter-spacing: 0; }
+    .footer-links {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px 40px;
+    }
+    .footer-links a {
+      font-family: 'DM Mono', monospace; font-size: 11px; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--dim); transition: color 0.2s; padding: 4px 0;
+    }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-social { display: flex; gap: 16px; justify-content: flex-end; }
+    .footer-social a {
+      width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--dim); font-size: 14px; transition: all 0.2s;
+    }
+    .footer-social a:hover { border-color: var(--gold); color: var(--gold); }
+    .footer-copy {
+      max-width: 1200px; margin: 32px auto 0; padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-family: 'DM Mono', monospace; font-size: 10px; color: var(--dim);
+      letter-spacing: 1px; text-align: center;
+    }
+
+    /* ── ANIMATIONS ── */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s, transform 0.6s; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 0.1s; } .d2 { transition-delay: 0.2s; }
+    .d3 { transition-delay: 0.3s; } .d4 { transition-delay: 0.4s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .hamburger { display: block; }
+      .about-grid, .marlins-grid { grid-template-columns: 1fr; gap: 40px; }
+      .values-grid { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr; gap: 24px; text-align: center; }
+      .footer-links { justify-items: center; }
+      .footer-social { justify-content: center; }
+      .section { padding: 64px 5%; }
+    }
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 44px; }
+      .hero-sub { font-size: 15px; }
+      .hero-actions { flex-direction: column; align-items: center; }
+      .btn-primary, .btn-outline { width: 100%; justify-content: center; }
+      .teams-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+      .team-card { padding: 24px 16px; }
+      .team-age { font-size: 32px; }
+      .cta-banner { padding: 40px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="/" class="nav-logo">
+      
+      SFL THUNDER
+    </a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <div class="nav-dropdown">
+        <a href="/about" class="dropdown-trigger">About &#9662;</a>
+        <div class="dropdown-menu">
+          <a href="/about">Our Story</a>
+          <a href="/directory">Directory</a>
+        </div>
+      </div>
+      <div class="nav-dropdown">
+        <a href="#" class="dropdown-trigger">Join Thunder &#9662;</a>
+        <div class="dropdown-menu">
+          <a href="/team-interest">Team Interest Form</a>
+          <a href="/player-interest">Player Interest Form</a>
+        </div>
+      </div>
+      <a href="/uniforms">Uniform Packages</a>
+      <a href="/blog">Blog</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="/">Home</a>
+    <a href="/about">Our Story</a>
+    <a href="/directory">Directory</a>
+    <a href="/team-interest">Team Interest Form</a>
+    <a href="/player-interest">Player Interest Form</a>
+    <a href="/uniforms">Uniform Packages</a>
+    <a href="/blog">Blog</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow reveal">South Florida Thunder</div>
+      <h1 class="reveal d1">Where Champions<br/>Are <em>Built</em></h1>
+      <p class="hero-sub reveal d2">A 501(c)(3) youth travel baseball &amp; softball organization based in North Palm Beach, Florida. Powered by the Miami Marlins.</p>
+      <div class="hero-actions reveal d3">
+        <a href="/player-interest" class="btn-primary">Player Interest Form ⚾</a>
+        <a href="/about" class="btn-outline">Learn More →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="ticker-track">
+      <span class="ticker-item">USSSA Champions</span>
+      <span class="ticker-item">Perfect Game</span>
+      <span class="ticker-item">GSA Winners</span>
+      <span class="ticker-item">SFL Travel League</span>
+      <span class="ticker-item">10 Baseball Teams</span>
+      <span class="ticker-item">1 Softball Team</span>
+      <span class="ticker-item">Ages 7U – 13U</span>
+      <span class="ticker-item">501(c)(3) Non-Profit</span>
+      <span class="ticker-item">USSSA Champions</span>
+      <span class="ticker-item">Perfect Game</span>
+      <span class="ticker-item">GSA Winners</span>
+      <span class="ticker-item">SFL Travel League</span>
+      <span class="ticker-item">10 Baseball Teams</span>
+      <span class="ticker-item">1 Softball Team</span>
+      <span class="ticker-item">Ages 7U – 13U</span>
+      <span class="ticker-item">501(c)(3) Non-Profit</span>
+    </div>
+  </div>
+
+  <!-- WHO WE ARE -->
+  <section class="section">
+    <div class="section-inner">
+      <div class="about-grid">
+        <div class="about-text reveal">
+          <div class="section-label">Who We Are</div>
+          <h2 class="section-title">Building <em>Quality Citizens</em> Through Baseball</h2>
+          <p>The South Florida Thunder is a 501(c)(3) non-profit corporation with a focus on travel baseball and softball. Based out of North Palm Beach, Florida, we field 10 baseball teams and 1 softball team across age groups from 7U to 13U.</p>
+          <p><strong>Our mindset is "we are stronger together than we are apart"</strong> — we encourage a connection between all teams throughout the organization, creating a community we call <strong>Thunder Nation</strong>.</p>
+        </div>
+        <div class="about-stats reveal d2">
+          <div class="stat-card">
+            <div class="stat-val">11</div>
+            <div class="stat-label">Teams</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val">7</div>
+            <div class="stat-label">Age Groups</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val">501c3</div>
+            <div class="stat-label">Non-Profit</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val">NPB</div>
+            <div class="stat-label">North Palm Beach</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAMS PREVIEW -->
+  <section class="section" style="background: var(--surface);">
+    <div class="section-inner">
+      <div class="section-label reveal">Our Teams</div>
+      <h2 class="section-title reveal d1">Teams From <em>7U to 13U</em></h2>
+      <p class="section-sub reveal d2">Multiple divisions per age group competing in USSSA, Perfect Game, GSA, and SFL Travel League.</p>
+      <div class="teams-grid">
+        <div class="team-card reveal">
+          <div class="team-age">7U</div>
+          <div class="team-name">Thunder</div>
+          <div class="team-divisions">Travel Baseball</div>
+        </div>
+        <div class="team-card reveal d1">
+          <div class="team-age">8U</div>
+          <div class="team-name">Thunder</div>
+          <div class="team-divisions">Black &amp; Gold</div>
+        </div>
+        <div class="team-card reveal d2">
+          <div class="team-age">9U</div>
+          <div class="team-name">Thunder</div>
+          <div class="team-divisions">Black · Gold · Grey</div>
+        </div>
+        <div class="team-card reveal d3">
+          <div class="team-age">10U</div>
+          <div class="team-name">Thunder</div>
+          <div class="team-divisions">Black &amp; Gold</div>
+        </div>
+        <div class="team-card reveal">
+          <div class="team-age">11U</div>
+          <div class="team-name">Thunder</div>
+          <div class="team-divisions">Black &amp; Gold</div>
+        </div>
+        <div class="team-card reveal d1">
+          <div class="team-age">12U</div>
+          <div class="team-name">Thunder</div>
+          <div class="team-divisions">Travel Baseball</div>
+        </div>
+        <div class="team-card reveal d2">
+          <div class="team-age">13U</div>
+          <div class="team-name">Thunder</div>
+          <div class="team-divisions">Travel Baseball</div>
+        </div>
+        <div class="team-card reveal d3">
+          <div class="team-age">☆</div>
+          <div class="team-name">Thunder Softball</div>
+          <div class="team-divisions">Travel Softball</div>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 40px;">
+        <a href="/teams" class="btn-outline reveal">View All Teams →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARLINS PARTNERSHIP -->
+  <section class="section">
+    <div class="section-inner">
+      <div class="marlins-grid">
+        <div class="marlins-badge reveal">
+          MIAMI MARLINS<br/>PARTNERSHIP
+        </div>
+        <div class="marlins-text reveal d2">
+          <div class="section-label">Powered By</div>
+          <h3>Proud Partners of the <em>Miami Marlins</em></h3>
+          <p>The Thunder is proud to be powered by the Miami Marlins. Our goal is to build lifelong fans of baseball, starting with our home team.</p>
+          <ul class="highlight-list">
+            <li>Teams have played on the field at loanDepot Park</li>
+            <li>Players have thrown out the first pitch at Marlins games</li>
+            <li>Helped groundskeepers change bases between innings</li>
+            <li>Led the crowd with Billy the Marlin</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALUES -->
+  <section class="section" style="background: var(--surface);">
+    <div class="section-inner">
+      <div class="section-label reveal">Our Values</div>
+      <h2 class="section-title reveal d1">A Culture of <em>Winning</em></h2>
+      <p class="section-sub reveal d2">We believe winning is a byproduct of hard work, dedication, teamwork, and commitment.</p>
+      <div class="values-grid">
+        <div class="value-card reveal">
+          <div class="value-icon">🏆</div>
+          <h3>Excellence</h3>
+          <p>We want our Thunder players to be winners — it's harder to win than to lose, and we never want complacency in our program.</p>
+        </div>
+        <div class="value-card reveal d1">
+          <div class="value-icon">🤝</div>
+          <h3>Community</h3>
+          <p>Thunder Nation events like our preseason Welcome at Roger Dean Stadium and Thundermania build lasting bonds across all teams.</p>
+        </div>
+        <div class="value-card reveal d2">
+          <div class="value-icon">⭐</div>
+          <h3>Character</h3>
+          <p>Our mission is to develop quality citizens through the sport of baseball — the best players on the field and in life.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="section-inner">
+      <div class="section-label reveal" style="text-align: center;">Interested?</div>
+      <h2 class="section-title reveal d1" style="text-align: center;">Get on Our <em>Radar</em></h2>
+      <p class="section-sub reveal d2" style="text-align: center; margin-left: auto; margin-right: auto;">SFL Thunder is a select travel program. Players try out when openings are available. Submit your interest below and we'll reach out when it's time.</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 800px; margin: 0 auto;">
+        <a href="/player-interest" class="cta-banner reveal" style="text-decoration: none; cursor: pointer; padding: 48px 32px;">
+          <div style="font-size: 48px; margin-bottom: 16px;">⚾</div>
+          <h2 style="font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--white); margin-bottom: 8px;">Player Interest</h2>
+          <p style="color: var(--muted); font-size: 14px; margin-bottom: 0;">Parents - submit your player's info so we know who to invite when a roster spot opens up.</p>
+        </a>
+        <a href="/team-interest" class="cta-banner reveal d1" style="text-decoration: none; cursor: pointer; padding: 48px 32px;">
+          <div style="font-size: 48px; margin-bottom: 16px;">🏟️</div>
+          <h2 style="font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--white); margin-bottom: 8px;">Team Interest</h2>
+          <p style="color: var(--muted); font-size: 14px; margin-bottom: 0;">Coaches or organizations looking to bring a team into the Thunder program - let's talk.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        SFL THUNDER
+        <p>South Florida Thunder<br/>North Palm Beach, FL</p>
+      </div>
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/team-interest">Team Interest</a>
+        <a href="/player-interest">Player Interest</a>
+        <a href="/uniforms">Uniforms</a>
+        <a href="/blog">Blog</a>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="Facebook">f</a>
+        <a href="#" aria-label="Twitter">𝕏</a>
+        <a href="#" aria-label="Instagram">ig</a>
+      </div>
+    </div>
+    <div class="footer-copy">
+      © 2026 South Florida Thunder · 501(c)(3) Non-Profit · Powered by the Miami Marlins
+    </div>
+  </footer>
+
+  <script>
+    // Hamburger
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      mobileMenu.classList.toggle('open');
+    });
+    // Close mobile menu on link click
+    mobileMenu.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        mobileMenu.classList.remove('open');
+      });
+    });
+
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
