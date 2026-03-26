@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Newsletter | South Florida Thunder</title>
+  <meta name="description" content="Thunder Nation News — the official newsletter of the South Florida Thunder youth travel baseball & softball organization."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --surface2: #1a1a1a;
+      --border: #2a2a2a;
+      --gold: #FFB612;
+      --gold-dim: rgba(255,182,18,0.15);
+      --gold-br: rgba(255,182,18,0.3);
+      --gold-hi: #FFD24D;
+      --white: #ffffff;
+      --text: #e8e8e8;
+      --muted: #999999;
+      --dim: #666666;
+      --red: #e74c3c;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; height: 72px;
+      background: rgba(10,10,10,0.92); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--gold);
+      letter-spacing: 2px; display: flex; align-items: center; gap: 10px;
+    }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a {
+      font-family: 'DM Mono', monospace; font-size: 11px; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--muted); transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-links a.nav-active { color: var(--gold); }
+    .nav-dropdown { position: relative; }
+    .dropdown-trigger { cursor: pointer; }
+    .dropdown-menu {
+      display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+      background: rgba(17,17,17,0.98); backdrop-filter: blur(16px);
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 8px 0; min-width: 200px; margin-top: 12px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    }
+    .dropdown-menu::before {
+      content: ''; position: absolute; top: -12px; left: 0; right: 0; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu { display: block; }
+    .dropdown-menu a {
+      display: block; padding: 10px 20px; font-family: 'DM Mono', monospace;
+      font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px;
+      color: var(--muted); transition: all 0.2s; white-space: nowrap;
+    }
+    .dropdown-menu a:hover { color: var(--gold); background: rgba(255,182,18,0.05); }
+    .nav-cta {
+      background: var(--gold) !important; color: var(--bg) !important;
+      padding: 8px 20px !important; border-radius: 6px; font-weight: 600 !important;
+      transition: background 0.2s, transform 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--gold-hi) !important; transform: translateY(-1px); }
+
+    .hamburger {
+      display: none; background: none; border: none; cursor: pointer;
+      width: 28px; height: 20px; position: relative; z-index: 101;
+    }
+    .hamburger span {
+      display: block; width: 100%; height: 2px; background: var(--text);
+      position: absolute; left: 0; transition: all 0.3s;
+    }
+    .hamburger span:nth-child(1) { top: 0; }
+    .hamburger span:nth-child(2) { top: 9px; }
+    .hamburger span:nth-child(3) { top: 18px; }
+    .hamburger.open span:nth-child(1) { top: 9px; transform: rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { top: 9px; transform: rotate(-45deg); }
+
+    .mobile-menu {
+      display: none; position: fixed; top: 72px; left: 0; right: 0;
+      background: rgba(10,10,10,0.98); backdrop-filter: blur(16px);
+      padding: 24px 5%; flex-direction: column; gap: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: 'DM Mono', monospace; font-size: 13px; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--muted); padding: 8px 0;
+    }
+    .mobile-menu a:hover { color: var(--gold); }
+    .mobile-menu .nav-cta {
+      text-align: center; margin-top: 8px;
+    }
+
+    /* ── BUTTONS ── */
+    .btn-gold {
+      background: var(--gold); color: var(--bg); font-family: 'DM Sans', sans-serif;
+      font-size: 14px; font-weight: 600; padding: 12px 28px; border-radius: 8px;
+      border: none; cursor: pointer; transition: all 0.25s;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-gold:hover { background: var(--gold-hi); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,182,18,0.3); }
+
+    /* ── ISSUE PAGE ── */
+    .issue-page { max-width: 680px; margin: 0 auto; padding: 92px 20px 80px; }
+    .issue-back-link {
+      display: inline-block; padding: 12px 0 24px; font-size: 13px; color: var(--muted);
+      text-decoration: none; letter-spacing: 1px; font-family: 'DM Mono', monospace;
+    }
+    .issue-back-link:hover { color: var(--gold); }
+
+    /* Masthead */
+    .issue-masthead-bar {
+      background: var(--surface); border-top: 3px solid var(--gold);
+      border-bottom: 3px solid var(--gold); padding: 32px 24px; text-align: center;
+    }
+    .issue-org-label {
+      font-family: 'Bebas Neue', sans-serif; font-size: 14px; letter-spacing: 4px;
+      color: var(--gold); margin-bottom: 12px;
+    }
+    .issue-main-title {
+      font-family: 'Bebas Neue', sans-serif; font-size: clamp(48px, 10vw, 80px);
+      line-height: 0.9; color: var(--white);
+    }
+    .issue-title-gold { color: var(--gold); }
+    .issue-number-label {
+      font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 3px;
+      color: var(--muted); margin-top: 8px;
+    }
+    .issue-date-label {
+      font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 4px;
+      color: var(--gold); margin-top: 6px;
+    }
+    .issue-season-badge {
+      display: inline-block; margin-top: 10px; background: var(--gold-dim);
+      color: var(--gold); font-family: 'DM Mono', monospace; font-size: 11px;
+      letter-spacing: 2px; padding: 4px 12px; border-radius: 3px;
+    }
+
+    /* Bolt divider */
+    .issue-bolt-divider {
+      display: flex; align-items: center; justify-content: center; gap: 4px;
+      padding: 12px 0; color: var(--gold); opacity: 0.7; background: var(--bg);
+    }
+
+    /* Intro */
+    .issue-intro-block {
+      background: var(--surface); padding: 28px 32px; font-size: 15px;
+      line-height: 1.8; color: #ccc;
+    }
+    .issue-intro-block p { margin-bottom: 14px; }
+    .issue-intro-block p:last-child { margin-bottom: 0; }
+
+    /* Sections */
+    .issue-section { background: var(--surface); margin-bottom: 4px; }
+    .issue-section-header {
+      background: var(--bg); padding: 14px 20px; display: flex;
+      align-items: center; justify-content: space-between;
+      border-left: 4px solid var(--gold);
+    }
+    .issue-section-header-left { display: flex; align-items: center; gap: 8px; }
+    .issue-chevrons { color: var(--gold); font-size: 18px; font-weight: bold; }
+    .issue-section-type {
+      font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--white);
+      letter-spacing: 2px;
+    }
+    .issue-section-title-label {
+      font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--muted);
+    }
+    .issue-section-bolt {
+      width: 32px; height: 32px; background: var(--gold); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #000; flex-shrink: 0;
+    }
+    .issue-section-body { padding: 20px 24px; }
+    .issue-section-body p {
+      font-size: 14px; line-height: 1.75; color: #ccc; margin-bottom: 12px;
+    }
+    .issue-section-body p:last-child { margin-bottom: 0; }
+
+    /* Footer block */
+    .issue-footer-block {
+      background: var(--surface); border-top: 2px solid var(--gold);
+      padding: 32px 24px; text-align: center;
+    }
+    .issue-footer-title {
+      font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--white);
+      letter-spacing: 3px; margin-bottom: 16px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--surface); border-top: 1px solid var(--border);
+      padding: 48px 5% 32px;
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 40px; align-items: start;
+    }
+    .footer-brand {
+      font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--gold);
+      letter-spacing: 2px;
+    }
+    .footer-brand p { font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--dim); margin-top: 8px; letter-spacing: 0; }
+    .footer-links {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px 40px;
+    }
+    .footer-links a {
+      font-family: 'DM Mono', monospace; font-size: 11px; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--dim); transition: color 0.2s; padding: 4px 0;
+    }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-social { display: flex; gap: 16px; justify-content: flex-end; }
+    .footer-social a {
+      width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--dim); font-size: 14px; transition: all 0.2s;
+    }
+    .footer-social a:hover { border-color: var(--gold); color: var(--gold); }
+    .footer-copy {
+      max-width: 1200px; margin: 32px auto 0; padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-family: 'DM Mono', monospace; font-size: 10px; color: var(--dim);
+      letter-spacing: 1px; text-align: center;
+    }
+
+    /* ── ANIMATIONS ── */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s, transform 0.6s; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 0.1s; } .d2 { transition-delay: 0.2s; }
+    .d3 { transition-delay: 0.3s; } .d4 { transition-delay: 0.4s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .hamburger { display: block; }
+      .footer-inner { grid-template-columns: 1fr; gap: 24px; text-align: center; }
+      .footer-links { justify-items: center; }
+      .footer-social { justify-content: center; }
+      .issue-page { padding: 92px 16px 60px; }
+    }
+    @media (max-width: 480px) {
+      .issue-main-title { font-size: 48px; }
+      .issue-intro-block { padding: 20px 16px; }
+      .issue-section-body { padding: 16px; }
+      .issue-section-header { padding: 12px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="/" class="nav-logo">
+
+      SFL THUNDER
+    </a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <div class="nav-dropdown">
+        <a href="/about" class="dropdown-trigger">About &#9662;</a>
+        <div class="dropdown-menu">
+          <a href="/about">Our Story</a>
+          <a href="/directory">Directory</a>
+        </div>
+      </div>
+      <div class="nav-dropdown">
+        <a href="#" class="dropdown-trigger">Join Thunder &#9662;</a>
+        <div class="dropdown-menu">
+          <a href="/team-interest">Team Interest Form</a>
+          <a href="/player-interest">Player Interest Form</a>
+        </div>
+      </div>
+      <a href="/uniforms">Uniform Packages</a>
+      <a href="/newsletter" class="nav-active">Newsletter</a>
+      <a href="/blog">Blog</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="/">Home</a>
+    <a href="/about">Our Story</a>
+    <a href="/directory">Directory</a>
+    <a href="/team-interest">Team Interest Form</a>
+    <a href="/player-interest">Player Interest Form</a>
+    <a href="/uniforms">Uniform Packages</a>
+    <a href="/newsletter">Newsletter</a>
+    <a href="/blog">Blog</a>
+  </div>
+
+  <!-- Issue content loaded by JS -->
+  <div id="issue-root">
+    <div style="text-align:center;padding:160px 24px 80px;color:var(--muted)">Loading...</div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        SFL THUNDER
+        <p>South Florida Thunder<br/>North Palm Beach, FL</p>
+      </div>
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/team-interest">Team Interest</a>
+        <a href="/player-interest">Player Interest</a>
+        <a href="/uniforms">Uniforms</a>
+        <a href="/newsletter">Newsletter</a>
+        <a href="/blog">Blog</a>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="Facebook">f</a>
+        <a href="#" aria-label="Twitter">𝕏</a>
+        <a href="#" aria-label="Instagram">ig</a>
+      </div>
+    </div>
+    <div class="footer-copy">
+      © 2026 South Florida Thunder · 501(c)(3) Non-Profit · Powered by the Miami Marlins
+    </div>
+  </footer>
+
+  <script>
+    // Hamburger
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      mobileMenu.classList.toggle('open');
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        mobileMenu.classList.remove('open');
+      });
+    });
+
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Supabase
+    const SUPABASE_URL = 'https://zyonidiybzrgklrmalbt.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5b25pZGl5YnpyZ2tscm1hbGJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MTY5NzUsImV4cCI6MjA4ODI5Mjk3NX0.5See-qjLkXA4CoJi9tNfcLAX_cdvZhPaxw8iViKM8S8';
+
+    const slug = new URLSearchParams(location.search).get('slug');
+
+    const boltIcon = `<svg width="12" height="16" viewBox="0 0 14 20" fill="currentColor"><path d="M8 0L0 11h6l-1 9 9-12H8z"/></svg>`;
+    const boltDivider = `<div class="issue-bolt-divider">${boltIcon}${boltIcon}${boltIcon}</div>`;
+
+    async function loadIssue() {
+      const root = document.getElementById('issue-root');
+      if (!slug) { root.innerHTML = notFound(); return; }
+
+      try {
+        const res = await fetch(
+          `${SUPABASE_URL}/rest/v1/newsletter_issues?slug=eq.${encodeURIComponent(slug)}&published=eq.true&limit=1`,
+          { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+        );
+        const data = await res.json();
+        if (!data.length) { root.innerHTML = notFound(); return; }
+
+        const issue = data[0];
+        document.title = `${issue.title} | Thunder Nation News`;
+
+        const d = new Date(issue.issue_date + 'T12:00:00');
+        const dateStr = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase();
+
+        const sectionsHTML = (issue.sections || []).map(s => `
+          <div class="issue-section">
+            <div class="issue-section-header">
+              <div class="issue-section-header-left">
+                <span class="issue-chevrons">&rsaquo;&rsaquo; </span>
+                <span class="issue-section-type">${escHTML(s.type.toUpperCase())}</span>
+                ${s.title && s.title !== s.type ? `<span class="issue-section-title-label"> &mdash; ${escHTML(s.title)}</span>` : ''}
+              </div>
+              <div class="issue-section-bolt">${boltIcon}</div>
+            </div>
+            <div class="issue-section-body">
+              ${(s.content||'').split('\n\n').map(p=>`<p>${escHTML(p).replace(/\n/g,'<br>')}</p>`).join('')}
+            </div>
+          </div>
+          ${boltDivider}
+        `).join('');
+
+        root.innerHTML = `
+          <div class="issue-page">
+            <a href="/newsletter" class="issue-back-link">&larr; All Newsletters</a>
+
+            <div class="issue-masthead-bar">
+              <div class="issue-org-label">SOUTH FLORIDA THUNDER BASEBALL</div>
+              <h1 class="issue-main-title"><span class="issue-title-gold">THUNDER</span><br>NATION NEWS</h1>
+              ${issue.issue_number ? `<div class="issue-number-label">${escHTML(issue.issue_number)}</div>` : ''}
+              <div class="issue-date-label">${dateStr}</div>
+              <span class="issue-season-badge">${escHTML(issue.season)}</span>
+            </div>
+
+            ${boltDivider}
+
+            ${issue.intro_text ? `
+              <div class="issue-intro-block">
+                ${issue.intro_text.split('\n\n').map(p => `<p>${escHTML(p).replace(/\n/g,'<br>')}</p>`).join('')}
+              </div>
+              ${boltDivider}
+            ` : ''}
+
+            ${sectionsHTML}
+
+            <div class="issue-footer-block">
+              <div class="issue-footer-title">&#9889; THUNDER THANK YOU &#9889;</div>
+              <p style="font-size:13px;color:var(--muted);margin-top:16px">
+                We extend special thanks to our Thunder Nation Corporate Sponsors. As the season progresses, we'll be featuring various local businesses that have supported the Thunder financially.
+              </p>
+              <div style="margin-top:20px">
+                <a href="/uniforms" class="btn-gold">Thunder Nation Team Store</a>
+              </div>
+            </div>
+          </div>`;
+      } catch(e) {
+        root.innerHTML = notFound();
+      }
+    }
+
+    function escHTML(str) {
+      const d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
+
+    function notFound() {
+      return `<div style="text-align:center;padding:160px 24px 80px">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--gold)">Issue Not Found</div>
+        <p style="color:var(--muted);margin:16px 0">This newsletter issue doesn't exist or hasn't been published yet.</p>
+        <a href="/newsletter" class="btn-gold" style="display:inline-block;margin-top:8px">&larr; Back to Newsletter</a>
+      </div>`;
+    }
+
+    loadIssue();
+  </script>
+</body>
+</html>

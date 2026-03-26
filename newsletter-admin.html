@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Newsletter Admin | South Florida Thunder</title>
+  <meta name="description" content="Admin panel for publishing Thunder Nation newsletters."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --surface2: #1a1a1a;
+      --border: #2a2a2a;
+      --gold: #FFB612;
+      --gold-dim: rgba(255,182,18,0.15);
+      --gold-br: rgba(255,182,18,0.3);
+      --gold-hi: #FFD24D;
+      --white: #ffffff;
+      --text: #e8e8e8;
+      --muted: #999999;
+      --dim: #666666;
+      --red: #e74c3c;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; height: 72px;
+      background: rgba(10,10,10,0.92); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--gold);
+      letter-spacing: 2px; display: flex; align-items: center; gap: 10px;
+    }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a {
+      font-family: 'DM Mono', monospace; font-size: 11px; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--muted); transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-links a.nav-active { color: var(--gold); }
+    .nav-dropdown { position: relative; }
+    .dropdown-trigger { cursor: pointer; }
+    .dropdown-menu {
+      display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+      background: rgba(17,17,17,0.98); backdrop-filter: blur(16px);
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 8px 0; min-width: 200px; margin-top: 12px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    }
+    .dropdown-menu::before {
+      content: ''; position: absolute; top: -12px; left: 0; right: 0; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu { display: block; }
+    .dropdown-menu a {
+      display: block; padding: 10px 20px; font-family: 'DM Mono', monospace;
+      font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px;
+      color: var(--muted); transition: all 0.2s; white-space: nowrap;
+    }
+    .dropdown-menu a:hover { color: var(--gold); background: rgba(255,182,18,0.05); }
+    .nav-cta {
+      background: var(--gold) !important; color: var(--bg) !important;
+      padding: 8px 20px !important; border-radius: 6px; font-weight: 600 !important;
+      transition: background 0.2s, transform 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--gold-hi) !important; transform: translateY(-1px); }
+
+    .hamburger {
+      display: none; background: none; border: none; cursor: pointer;
+      width: 28px; height: 20px; position: relative; z-index: 101;
+    }
+    .hamburger span {
+      display: block; width: 100%; height: 2px; background: var(--text);
+      position: absolute; left: 0; transition: all 0.3s;
+    }
+    .hamburger span:nth-child(1) { top: 0; }
+    .hamburger span:nth-child(2) { top: 9px; }
+    .hamburger span:nth-child(3) { top: 18px; }
+    .hamburger.open span:nth-child(1) { top: 9px; transform: rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { top: 9px; transform: rotate(-45deg); }
+
+    .mobile-menu {
+      display: none; position: fixed; top: 72px; left: 0; right: 0;
+      background: rgba(10,10,10,0.98); backdrop-filter: blur(16px);
+      padding: 24px 5%; flex-direction: column; gap: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: 'DM Mono', monospace; font-size: 13px; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--muted); padding: 8px 0;
+    }
+    .mobile-menu a:hover { color: var(--gold); }
+    .mobile-menu .nav-cta { text-align: center; margin-top: 8px; }
+
+    /* ── ADMIN ── */
+    .admin-wrap { max-width: 800px; margin: 0 auto; padding: 100px 20px 80px; }
+
+    /* Password Gate */
+    .gate-card {
+      max-width: 400px; margin: 120px auto; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 16px; padding: 48px 36px;
+      text-align: center;
+    }
+    .gate-bolt { font-size: 48px; margin-bottom: 16px; color: var(--gold); }
+    .gate-card h2 {
+      font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--white);
+      margin-bottom: 8px;
+    }
+    .gate-card p { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+    .gate-input {
+      width: 100%; padding: 12px 16px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--surface2);
+      color: var(--text); font-size: 15px; font-family: 'DM Sans', sans-serif;
+      outline: none; text-align: center;
+    }
+    .gate-input:focus { border-color: var(--gold); }
+    .gate-btn {
+      width: 100%; margin-top: 16px; background: var(--gold); color: var(--bg);
+      font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+      padding: 12px; border-radius: 8px; border: none; cursor: pointer;
+      transition: all 0.25s;
+    }
+    .gate-btn:hover { background: var(--gold-hi); }
+    .gate-error { color: var(--red); font-size: 13px; margin-top: 12px; min-height: 20px; }
+
+    /* Form card */
+    .admin-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 32px 28px; margin-bottom: 24px;
+    }
+    .admin-card-label {
+      font-family: 'DM Mono', monospace; font-size: 11px; text-transform: uppercase;
+      letter-spacing: 3px; color: var(--gold); margin-bottom: 16px;
+    }
+    .admin-card h3 {
+      font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: var(--white);
+      margin-bottom: 20px;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block; font-family: 'DM Mono', monospace; font-size: 11px;
+      text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 12px 16px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--surface2);
+      color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px;
+      outline: none; transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--gold);
+    }
+    .form-group textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+    .form-group select { cursor: pointer; }
+
+    /* Section pills */
+    .section-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+    .section-pill {
+      font-family: 'DM Mono', monospace; font-size: 11px; text-transform: uppercase;
+      letter-spacing: 1px; padding: 8px 16px; border-radius: 6px; cursor: pointer;
+      border: 1px solid var(--border); background: var(--surface2); color: var(--muted);
+      transition: all 0.2s;
+    }
+    .section-pill:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* Section card */
+    .section-entry {
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
+      padding: 20px; margin-bottom: 12px; position: relative;
+    }
+    .section-type-badge {
+      display: inline-block; font-family: 'DM Mono', monospace; font-size: 10px;
+      text-transform: uppercase; letter-spacing: 1.5px; color: var(--gold);
+      background: var(--gold-dim); padding: 3px 10px; border-radius: 4px;
+      margin-bottom: 12px;
+    }
+    .section-remove {
+      position: absolute; top: 12px; right: 12px; width: 28px; height: 28px;
+      border-radius: 6px; border: 1px solid var(--border); background: var(--surface);
+      color: var(--muted); font-size: 16px; cursor: pointer; display: flex;
+      align-items: center; justify-content: center; transition: all 0.2s;
+    }
+    .section-remove:hover { border-color: var(--red); color: var(--red); }
+    .section-entry input, .section-entry textarea {
+      width: 100%; padding: 10px 14px; border-radius: 6px;
+      border: 1px solid var(--border); background: var(--bg);
+      color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px;
+      outline: none; margin-bottom: 10px;
+    }
+    .section-entry textarea { min-height: 120px; resize: vertical; line-height: 1.6; }
+    .section-entry input:focus, .section-entry textarea:focus { border-color: var(--gold); }
+
+    /* Photo upload */
+    .drop-zone {
+      border: 2px dashed var(--border); border-radius: 12px; padding: 48px 24px;
+      text-align: center; cursor: pointer; transition: all 0.2s;
+    }
+    .drop-zone:hover, .drop-zone.dragover { border-color: var(--gold); background: var(--gold-dim); }
+    .drop-zone-icon { font-size: 36px; margin-bottom: 12px; }
+    .drop-zone p { color: var(--muted); font-size: 14px; }
+    .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; margin-top: 16px; }
+    .photo-thumb {
+      position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .photo-thumb-remove {
+      position: absolute; top: 4px; right: 4px; width: 24px; height: 24px;
+      border-radius: 50%; background: rgba(0,0,0,0.7); color: var(--white);
+      border: none; font-size: 14px; cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+    }
+    .photo-cover-label {
+      position: absolute; bottom: 0; left: 0; right: 0; background: var(--gold);
+      color: var(--bg); font-family: 'DM Mono', monospace; font-size: 9px;
+      text-transform: uppercase; letter-spacing: 1.5px; text-align: center;
+      padding: 3px 0; font-weight: 600;
+    }
+
+    /* AI section */
+    .ai-spinner { display: none; }
+    .ai-spinner.active { display: inline-block; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Buttons */
+    .btn-gold {
+      background: var(--gold); color: var(--bg); font-family: 'DM Sans', sans-serif;
+      font-size: 14px; font-weight: 600; padding: 12px 28px; border-radius: 8px;
+      border: none; cursor: pointer; transition: all 0.25s;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-gold:hover { background: var(--gold-hi); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,182,18,0.3); }
+    .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-outline-sm {
+      background: transparent; color: var(--text); font-family: 'DM Sans', sans-serif;
+      font-size: 14px; font-weight: 500; padding: 12px 28px; border-radius: 8px;
+      border: 1px solid var(--border); cursor: pointer; transition: all 0.25s;
+    }
+    .btn-outline-sm:hover { border-color: var(--gold); color: var(--gold); }
+    .btn-outline-sm:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Success banner */
+    .success-banner {
+      background: var(--gold-dim); border: 1px solid var(--gold-br); border-radius: 12px;
+      padding: 32px; text-align: center; margin-top: 24px;
+    }
+    .success-banner h3 {
+      font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--gold);
+      margin-bottom: 12px;
+    }
+    .success-banner p { color: var(--muted); font-size: 14px; margin-bottom: 16px; }
+    .success-banner a { color: var(--gold); text-decoration: underline; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--surface); border-top: 1px solid var(--border);
+      padding: 48px 5% 32px;
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 40px; align-items: start;
+    }
+    .footer-brand {
+      font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--gold);
+      letter-spacing: 2px;
+    }
+    .footer-brand p { font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--dim); margin-top: 8px; letter-spacing: 0; }
+    .footer-links {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px 40px;
+    }
+    .footer-links a {
+      font-family: 'DM Mono', monospace; font-size: 11px; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--dim); transition: color 0.2s; padding: 4px 0;
+    }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-social { display: flex; gap: 16px; justify-content: flex-end; }
+    .footer-social a {
+      width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--dim); font-size: 14px; transition: all 0.2s;
+    }
+    .footer-social a:hover { border-color: var(--gold); color: var(--gold); }
+    .footer-copy {
+      max-width: 1200px; margin: 32px auto 0; padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-family: 'DM Mono', monospace; font-size: 10px; color: var(--dim);
+      letter-spacing: 1px; text-align: center;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .hamburger { display: block; }
+      .footer-inner { grid-template-columns: 1fr; gap: 24px; text-align: center; }
+      .footer-links { justify-items: center; }
+      .footer-social { justify-content: center; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .admin-card { padding: 24px 20px; }
+      .gate-card { padding: 36px 24px; margin: 80px auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="/" class="nav-logo">
+
+      SFL THUNDER
+    </a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <div class="nav-dropdown">
+        <a href="/about" class="dropdown-trigger">About &#9662;</a>
+        <div class="dropdown-menu">
+          <a href="/about">Our Story</a>
+          <a href="/directory">Directory</a>
+        </div>
+      </div>
+      <div class="nav-dropdown">
+        <a href="#" class="dropdown-trigger">Join Thunder &#9662;</a>
+        <div class="dropdown-menu">
+          <a href="/team-interest">Team Interest Form</a>
+          <a href="/player-interest">Player Interest Form</a>
+        </div>
+      </div>
+      <a href="/uniforms">Uniform Packages</a>
+      <a href="/newsletter" class="nav-active">Newsletter</a>
+      <a href="/blog">Blog</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="/">Home</a>
+    <a href="/about">Our Story</a>
+    <a href="/directory">Directory</a>
+    <a href="/team-interest">Team Interest Form</a>
+    <a href="/player-interest">Player Interest Form</a>
+    <a href="/uniforms">Uniform Packages</a>
+    <a href="/newsletter">Newsletter</a>
+    <a href="/blog">Blog</a>
+  </div>
+
+  <!-- PASSWORD GATE -->
+  <div id="gate" class="admin-wrap" style="max-width:500px">
+    <div class="gate-card">
+      <div class="gate-bolt">&#9889;</div>
+      <h2>Admin Access</h2>
+      <p>Enter the password to access the newsletter admin panel.</p>
+      <form id="gate-form">
+        <input type="password" class="gate-input" id="gate-pw" placeholder="Password" autocomplete="off"/>
+        <button type="submit" class="gate-btn">Enter</button>
+        <div class="gate-error" id="gate-error"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADMIN FORM (hidden until auth) -->
+  <div id="admin-panel" class="admin-wrap" style="display:none">
+
+    <!-- Section 1: Issue Details -->
+    <div class="admin-card">
+      <div class="admin-card-label">Section 1</div>
+      <h3>Issue Details</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="issue-title" placeholder="e.g. Spring 2026 — Welcome Issue"/>
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="issue-date"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Season</label>
+          <select id="issue-season">
+            <option value="Spring">Spring</option>
+            <option value="Summer">Summer</option>
+            <option value="Fall">Fall</option>
+            <option value="Winter">Winter</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Issue Number (optional)</label>
+          <input type="text" id="issue-number" placeholder="e.g. Vol. 3, Issue 1"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Director's Intro</label>
+        <textarea id="issue-intro" placeholder="Hey Thunder Parents,&#10;&#10;Welcome to..."></textarea>
+      </div>
+    </div>
+
+    <!-- Section 2: Newsletter Sections -->
+    <div class="admin-card">
+      <div class="admin-card-label">Section 2</div>
+      <h3>Newsletter Sections</h3>
+      <div class="section-pills" id="section-pills">
+        <button type="button" class="section-pill" data-type="Game Day Recap">Game Day Recap</button>
+        <button type="button" class="section-pill" data-type="Tournament Results">Tournament Results</button>
+        <button type="button" class="section-pill" data-type="Player Spotlight">Player Spotlight</button>
+        <button type="button" class="section-pill" data-type="Special Visitor">Special Visitor</button>
+        <button type="button" class="section-pill" data-type="Thunder Cares">Thunder Cares</button>
+        <button type="button" class="section-pill" data-type="Upcoming Events">Upcoming Events</button>
+        <button type="button" class="section-pill" data-type="Custom">Custom</button>
+      </div>
+      <div id="sections-list"></div>
+    </div>
+
+    <!-- Section 3: Photo Upload -->
+    <div class="admin-card">
+      <div class="admin-card-label">Section 3</div>
+      <h3>Photo Upload</h3>
+      <div class="drop-zone" id="drop-zone">
+        <div class="drop-zone-icon">&#128247;</div>
+        <p>Drop photos or click to browse</p>
+        <input type="file" id="photo-input" multiple accept="image/*" style="display:none"/>
+      </div>
+      <div class="photo-grid" id="photo-grid"></div>
+    </div>
+
+    <!-- Section 4: AI Generator -->
+    <div class="admin-card">
+      <div class="admin-card-label">Section 4</div>
+      <h3>AI Generator</h3>
+      <div class="form-group">
+        <label>Anthropic API Key</label>
+        <input type="password" id="ai-key" placeholder="sk-ant-..." autocomplete="off"/>
+      </div>
+      <div class="form-group">
+        <label>Prompt / Instructions</label>
+        <textarea id="ai-prompt" style="min-height:80px" placeholder="e.g. Write a newsletter about our 9U team winning the USSSA tournament this weekend. Include a player spotlight on Jake Martinez who pitched a no-hitter."></textarea>
+      </div>
+      <button type="button" class="btn-gold" id="ai-generate" style="width:100%">
+        <span class="ai-spinner" id="ai-spinner">&#9881;</span>
+        &#9889; Generate with AI
+      </button>
+    </div>
+
+    <!-- Section 5: Preview & Publish -->
+    <div class="admin-card">
+      <div class="admin-card-label">Section 5</div>
+      <h3>Preview &amp; Publish</h3>
+      <div class="form-group">
+        <label>Content Preview</label>
+        <textarea id="preview-content" style="min-height:240px" placeholder="Generated or manually written content will appear here..."></textarea>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button type="button" class="btn-outline-sm" id="btn-draft">Save Draft</button>
+        <button type="button" class="btn-gold" id="btn-publish">Publish Now</button>
+      </div>
+      <div id="publish-result"></div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        SFL THUNDER
+        <p>South Florida Thunder<br/>North Palm Beach, FL</p>
+      </div>
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/team-interest">Team Interest</a>
+        <a href="/player-interest">Player Interest</a>
+        <a href="/uniforms">Uniforms</a>
+        <a href="/newsletter">Newsletter</a>
+        <a href="/blog">Blog</a>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="Facebook">f</a>
+        <a href="#" aria-label="Twitter">𝕏</a>
+        <a href="#" aria-label="Instagram">ig</a>
+      </div>
+    </div>
+    <div class="footer-copy">
+      © 2026 South Florida Thunder · 501(c)(3) Non-Profit · Powered by the Miami Marlins
+    </div>
+  </footer>
+
+  <script>
+    // Hamburger
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      mobileMenu.classList.toggle('open');
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        mobileMenu.classList.remove('open');
+      });
+    });
+
+    // ── Supabase ──
+    const SUPABASE_URL = 'https://zyonidiybzrgklrmalbt.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5b25pZGl5YnpyZ2tscm1hbGJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MTY5NzUsImV4cCI6MjA4ODI5Mjk3NX0.5See-qjLkXA4CoJi9tNfcLAX_cdvZhPaxw8iViKM8S8';
+
+    // ── Password Gate ──
+    const gate = document.getElementById('gate');
+    const panel = document.getElementById('admin-panel');
+
+    if (sessionStorage.getItem('thunder_admin') === '1') {
+      gate.style.display = 'none';
+      panel.style.display = 'block';
+    }
+
+    document.getElementById('gate-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const pw = document.getElementById('gate-pw').value;
+      if (pw === 'Thunder2025!') {
+        sessionStorage.setItem('thunder_admin', '1');
+        gate.style.display = 'none';
+        panel.style.display = 'block';
+      } else {
+        document.getElementById('gate-error').textContent = 'Incorrect password.';
+      }
+    });
+
+    // ── Set default date ──
+    document.getElementById('issue-date').valueAsDate = new Date();
+
+    // ── Sections Management ──
+    let sections = [];
+    const sectionsList = document.getElementById('sections-list');
+
+    document.getElementById('section-pills').addEventListener('click', (e) => {
+      const pill = e.target.closest('.section-pill');
+      if (!pill) return;
+      const type = pill.dataset.type;
+      sections.push({ type, title: '', content: '' });
+      renderSections();
+    });
+
+    function renderSections() {
+      sectionsList.innerHTML = sections.map((s, i) => `
+        <div class="section-entry" data-idx="${i}">
+          <span class="section-type-badge">${s.type}</span>
+          <button type="button" class="section-remove" onclick="removeSection(${i})">&times;</button>
+          <input type="text" placeholder="Section title" value="${escAttr(s.title)}" onchange="sections[${i}].title=this.value"/>
+          <textarea placeholder="Section content..." onchange="sections[${i}].content=this.value">${escHTML(s.content)}</textarea>
+        </div>
+      `).join('');
+    }
+
+    function removeSection(i) {
+      sections.splice(i, 1);
+      renderSections();
+    }
+
+    function escHTML(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+    function escAttr(str) { return str.replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+
+    // ── Photo Upload ──
+    const dropZone = document.getElementById('drop-zone');
+    const photoInput = document.getElementById('photo-input');
+    const photoGrid = document.getElementById('photo-grid');
+    let photos = [];
+
+    dropZone.addEventListener('click', () => photoInput.click());
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault(); dropZone.classList.remove('dragover');
+      addPhotos(e.dataTransfer.files);
+    });
+    photoInput.addEventListener('change', () => addPhotos(photoInput.files));
+
+    function addPhotos(files) {
+      [...files].forEach(file => {
+        if (!file.type.startsWith('image/')) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          photos.push({ name: file.name, data: e.target.result });
+          renderPhotos();
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renderPhotos() {
+      photoGrid.innerHTML = photos.map((p, i) => `
+        <div class="photo-thumb">
+          <img src="${p.data}" alt="${escAttr(p.name)}"/>
+          <button type="button" class="photo-thumb-remove" onclick="removePhoto(${i})">&times;</button>
+          ${i === 0 ? '<div class="photo-cover-label">Cover</div>' : ''}
+        </div>
+      `).join('');
+    }
+
+    function removePhoto(i) {
+      photos.splice(i, 1);
+      renderPhotos();
+    }
+
+    // ── AI Generator ──
+    // Load saved key
+    const aiKeyInput = document.getElementById('ai-key');
+    aiKeyInput.value = localStorage.getItem('thunder_api_key') || '';
+    aiKeyInput.addEventListener('change', () => localStorage.setItem('thunder_api_key', aiKeyInput.value));
+
+    document.getElementById('ai-generate').addEventListener('click', async () => {
+      const apiKey = aiKeyInput.value.trim();
+      if (!apiKey) { alert('Please enter your Anthropic API key.'); return; }
+
+      const title = document.getElementById('issue-title').value;
+      const season = document.getElementById('issue-season').value;
+      const intro = document.getElementById('issue-intro').value;
+      const prompt = document.getElementById('ai-prompt').value;
+      const sectionsSummary = sections.map(s =>
+        `[${s.type}] ${s.title}: ${s.content}`
+      ).join('\n');
+
+      const userMsg = `Create a Thunder Nation News newsletter.
+Title: ${title}
+Season: ${season}
+Director intro so far: ${intro}
+Sections already added: ${sectionsSummary || 'None yet'}
+Additional instructions: ${prompt || 'Write a complete newsletter with the info above.'}`;
+
+      const btn = document.getElementById('ai-generate');
+      const spinner = document.getElementById('ai-spinner');
+      btn.disabled = true;
+      spinner.classList.add('active');
+
+      try {
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true'
+          },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 2000,
+            system: "You are the newsletter writer for South Florida Thunder Baseball — a 501(c)(3) youth travel baseball & softball organization in North Palm Beach, Florida, powered by the Miami Marlins. Write Thunder Nation News newsletters. Tone: energetic, warm, family-oriented, proud, community-focused. Use phrases like 'Thunder Nation', 'Thunder strong', 'on the field and in life'. Youth baseball families audience. Write in plain text with ## Section headers.",
+            messages: [{ role: 'user', content: userMsg }]
+          })
+        });
+        const data = await res.json();
+        if (data.content && data.content[0]) {
+          document.getElementById('preview-content').value = data.content[0].text;
+        } else if (data.error) {
+          alert('API Error: ' + (data.error.message || JSON.stringify(data.error)));
+        }
+      } catch(e) {
+        alert('Failed to reach API: ' + e.message);
+      }
+
+      btn.disabled = false;
+      spinner.classList.remove('active');
+    });
+
+    // ── Slug Generator ──
+    function makeSlug(title, date) {
+      const base = title.toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+      const ym = date ? date.substring(0, 7) : new Date().toISOString().substring(0, 7);
+      return base + '-' + ym;
+    }
+
+    // ── Save / Publish ──
+    async function saveIssue(publish) {
+      const title = document.getElementById('issue-title').value.trim();
+      const date = document.getElementById('issue-date').value;
+      const season = document.getElementById('issue-season').value;
+      const number = document.getElementById('issue-number').value.trim();
+      const intro = document.getElementById('issue-intro').value.trim();
+      const preview = document.getElementById('preview-content').value.trim();
+
+      if (!title) { alert('Please enter a title.'); return; }
+      if (!date) { alert('Please enter a date.'); return; }
+
+      // If preview content exists but no sections, parse ## headers into sections
+      let finalSections = sections.length > 0 ? sections : [];
+      if (preview && finalSections.length === 0) {
+        const parts = preview.split(/^## /m).filter(Boolean);
+        finalSections = parts.map(part => {
+          const lines = part.split('\n');
+          const heading = lines[0].trim();
+          const content = lines.slice(1).join('\n').trim();
+          return { type: heading, title: heading, content };
+        });
+      }
+
+      const slug = makeSlug(title, date);
+      const body = {
+        slug,
+        title,
+        issue_date: date,
+        season,
+        issue_number: number || null,
+        intro_text: intro || null,
+        sections: finalSections,
+        cover_photo_url: photos.length > 0 ? photos[0].data : null,
+        photo_urls: photos.map(p => p.data),
+        published: publish,
+        published_at: publish ? new Date().toISOString() : null,
+        updated_at: new Date().toISOString()
+      };
+
+      const btn = publish ? document.getElementById('btn-publish') : document.getElementById('btn-draft');
+      btn.disabled = true;
+      btn.textContent = publish ? 'Publishing...' : 'Saving...';
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/newsletter_issues`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify(body)
+        });
+
+        const result = document.getElementById('publish-result');
+        if (res.ok) {
+          if (publish) {
+            result.innerHTML = `<div class="success-banner">
+              <h3>Issue Published!</h3>
+              <p>Your newsletter is now live.</p>
+              <a href="/newsletter-issue?slug=${slug}">View Newsletter &rarr;</a>
+              <br/><br/>
+              <a href="/newsletter" class="btn-gold" style="display:inline-block">&larr; Back to Newsletter</a>
+            </div>`;
+          } else {
+            result.innerHTML = `<div class="success-banner">
+              <h3>Draft Saved</h3>
+              <p>Your newsletter draft has been saved. Come back to publish it when ready.</p>
+            </div>`;
+          }
+        } else {
+          const err = await res.json();
+          if (err.code === '23505') {
+            result.innerHTML = `<div class="success-banner" style="border-color:var(--red)"><h3 style="color:var(--red)">Slug Already Exists</h3><p>A newsletter with this slug already exists. Try changing the title.</p></div>`;
+          } else {
+            result.innerHTML = `<div class="success-banner" style="border-color:var(--red)"><h3 style="color:var(--red)">Error</h3><p>${escHTML(err.message || 'Something went wrong.')}</p></div>`;
+          }
+        }
+      } catch(e) {
+        document.getElementById('publish-result').innerHTML = `<div class="success-banner" style="border-color:var(--red)"><h3 style="color:var(--red)">Error</h3><p>Failed to save. Check your connection.</p></div>`;
+      }
+
+      btn.disabled = false;
+      btn.textContent = publish ? 'Publish Now' : 'Save Draft';
+    }
+
+    document.getElementById('btn-draft').addEventListener('click', () => saveIssue(false));
+    document.getElementById('btn-publish').addEventListener('click', () => saveIssue(true));
+  </script>
+</body>
+</html>

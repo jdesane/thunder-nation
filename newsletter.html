@@ -399,74 +399,8 @@
       <h2 class="section-title reveal d1">Past <em>Newsletters</em></h2>
       <p class="section-sub reveal d2">Catch up on what you missed. Browse previous editions of the Thunder Nation newsletter.</p>
 
-      <div class="archive-grid">
-
-        <a href="#" class="newsletter-card reveal">
-          <div class="newsletter-date">March 2026</div>
-          <h3>Spring Season Kickoff</h3>
-          <p>The 2026 spring season is officially underway. Get the full rundown on tournament schedules, new roster additions, and the preseason Welcome event at Roger Dean Stadium.</p>
-          <div class="newsletter-tags">
-            <span class="newsletter-tag">Season Preview</span>
-            <span class="newsletter-tag">Events</span>
-          </div>
-          <span class="newsletter-link">Read Newsletter →</span>
-        </a>
-
-        <a href="#" class="newsletter-card reveal d1">
-          <div class="newsletter-date">February 2026</div>
-          <h3>Preseason Report</h3>
-          <p>Practices are heating up across all age groups. See which teams are looking strong heading into the spring, plus details on Thundermania and our Marlins partnership events.</p>
-          <div class="newsletter-tags">
-            <span class="newsletter-tag">Preseason</span>
-            <span class="newsletter-tag">Marlins</span>
-          </div>
-          <span class="newsletter-link">Read Newsletter →</span>
-        </a>
-
-        <a href="#" class="newsletter-card reveal d2">
-          <div class="newsletter-date">January 2026</div>
-          <h3>New Year, New Goals</h3>
-          <p>A look back at the fall season highlights and what's ahead for Thunder Nation in 2026. New coaching staff introductions and tryout updates for select age groups.</p>
-          <div class="newsletter-tags">
-            <span class="newsletter-tag">Recap</span>
-            <span class="newsletter-tag">Roster Updates</span>
-          </div>
-          <span class="newsletter-link">Read Newsletter →</span>
-        </a>
-
-        <a href="#" class="newsletter-card reveal d3">
-          <div class="newsletter-date">December 2025</div>
-          <h3>Fall Season Wrap-Up</h3>
-          <p>Championship results from USSSA and Perfect Game fall tournaments. Standout performances, team MVPs, and a recap of our end-of-season celebration.</p>
-          <div class="newsletter-tags">
-            <span class="newsletter-tag">Results</span>
-            <span class="newsletter-tag">Championships</span>
-          </div>
-          <span class="newsletter-link">Read Newsletter →</span>
-        </a>
-
-        <a href="#" class="newsletter-card reveal">
-          <div class="newsletter-date">November 2025</div>
-          <h3>Tournament Trail</h3>
-          <p>Thunder teams competed in six tournaments across South Florida this month. Full results, bracket breakdowns, and photos from the road.</p>
-          <div class="newsletter-tags">
-            <span class="newsletter-tag">Tournaments</span>
-            <span class="newsletter-tag">Results</span>
-          </div>
-          <span class="newsletter-link">Read Newsletter →</span>
-        </a>
-
-        <a href="#" class="newsletter-card reveal d1">
-          <div class="newsletter-date">October 2025</div>
-          <h3>Fall Ball Begins</h3>
-          <p>The fall season is here. New teams, fresh rosters, and a loaded tournament schedule. Everything you need to know about Thunder Nation this fall.</p>
-          <div class="newsletter-tags">
-            <span class="newsletter-tag">Season Preview</span>
-            <span class="newsletter-tag">Teams</span>
-          </div>
-          <span class="newsletter-link">Read Newsletter →</span>
-        </a>
-
+      <div id="archive-grid" class="archive-grid">
+        <p style="color:var(--muted);text-align:center;padding:40px">Loading...</p>
       </div>
     </div>
   </section>
@@ -500,6 +434,7 @@
         <a href="/uniforms">Uniforms</a>
         <a href="/newsletter">Newsletter</a>
         <a href="/blog">Blog</a>
+        <a href="/newsletter-admin" style="opacity:0.35;font-size:11px;letter-spacing:1px">Admin</a>
       </div>
       <div class="footer-social">
         <a href="#" aria-label="Facebook">f</a>
@@ -596,6 +531,42 @@
         msg.className = 'subscribe-msg';
       }, 5000);
     });
+
+    // Load newsletter archive from Supabase
+    async function loadArchive() {
+      const grid = document.getElementById('archive-grid');
+      try {
+        const res = await fetch(
+          `${SUPABASE_URL}/rest/v1/newsletter_issues?published=eq.true&order=issue_date.desc&select=slug,title,issue_date,season,issue_number,intro_text,sections`,
+          { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+        );
+        const issues = await res.json();
+        if (!issues.length) {
+          grid.innerHTML = '<p style="color:var(--muted);text-align:center;padding:40px">No issues published yet.</p>';
+          return;
+        }
+        grid.innerHTML = issues.map((issue, i) => {
+          const d = new Date(issue.issue_date + 'T12:00:00');
+          const dateStr = d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }).toUpperCase();
+          const excerpt = (issue.intro_text || '').replace(/\n/g,' ').substring(0, 140) + '...';
+          const sectionTags = [...new Set((issue.sections || []).map(s => s.type))].slice(0,3)
+            .map(t => `<span class="newsletter-tag">${t}</span>`).join('');
+          const delay = i % 4;
+          return `<a href="/newsletter-issue?slug=${issue.slug}" class="newsletter-card reveal${delay ? ' d'+delay : ''}">
+            <div class="newsletter-date">${dateStr}</div>
+            <h3>${issue.title}</h3>
+            <p>${excerpt}</p>
+            <div class="newsletter-tags">${sectionTags}</div>
+            <span class="newsletter-link">Read Newsletter →</span>
+          </a>`;
+        }).join('');
+        // Re-observe new cards for scroll reveal
+        grid.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+      } catch(e) {
+        grid.innerHTML = '<p style="color:var(--muted);text-align:center;padding:40px">Failed to load issues.</p>';
+      }
+    }
+    loadArchive();
   </script>
 </body>
 </html>

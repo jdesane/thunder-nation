@@ -15,7 +15,9 @@ Static HTML site with no build step. Each page is a self-contained `.html` file 
 - `about.html` - Mission, timeline, values, coaches, Marlins partnership
 - `teams.html` - Full team roster by age group (7U-13U baseball + softball)
 - `contact.html` - Contact form + FAQ accordion
-- `newsletter.html` - Newsletter subscribe form + archive of past editions
+- `newsletter.html` - Newsletter subscribe form + dynamic Supabase-powered archive grid
+- `newsletter-issue.html` - Single issue viewer (reads `?slug=` param, fetches from Supabase `newsletter_issues` table)
+- `newsletter-admin.html` - Password-gated admin panel for creating/publishing newsletters (AI generator, photo upload, Supabase publish)
 - `schedule.html` - Season events, calendar, practice info (removed from nav but page still exists)
 
 ### Planned pages (not yet built)
