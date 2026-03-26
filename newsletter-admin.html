@@ -447,10 +447,6 @@
       <div class="admin-card-label">Section 4</div>
       <h3>AI Generator</h3>
       <div class="form-group">
-        <label>Anthropic API Key</label>
-        <input type="password" id="ai-key" placeholder="sk-ant-..." autocomplete="off"/>
-      </div>
-      <div class="form-group">
         <label>Prompt / Instructions</label>
         <textarea id="ai-prompt" style="min-height:80px" placeholder="e.g. Write a newsletter about our 9U team winning the USSSA tournament this weekend. Include a player spotlight on Jake Martinez who pitched a no-hitter."></textarea>
       </div>
@@ -620,15 +616,7 @@
     }
 
     // ── AI Generator ──
-    // Load saved key
-    const aiKeyInput = document.getElementById('ai-key');
-    aiKeyInput.value = localStorage.getItem('thunder_api_key') || '';
-    aiKeyInput.addEventListener('change', () => localStorage.setItem('thunder_api_key', aiKeyInput.value));
-
     document.getElementById('ai-generate').addEventListener('click', async () => {
-      const apiKey = aiKeyInput.value.trim();
-      if (!apiKey) { alert('Please enter your Anthropic API key.'); return; }
-
       const title = document.getElementById('issue-title').value;
       const season = document.getElementById('issue-season').value;
       const intro = document.getElementById('issue-intro').value;
@@ -650,29 +638,19 @@ Additional instructions: ${prompt || 'Write a complete newsletter with the info 
       spinner.classList.add('active');
 
       try {
-        const res = await fetch('https://api.anthropic.com/v1/messages', {
+        const res = await fetch('/api/generate', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': apiKey,
-            'anthropic-version': '2023-06-01',
-            'anthropic-dangerous-direct-browser-access': 'true'
-          },
-          body: JSON.stringify({
-            model: 'claude-sonnet-4-20250514',
-            max_tokens: 2000,
-            system: "You are the newsletter writer for South Florida Thunder Baseball — a 501(c)(3) youth travel baseball & softball organization in North Palm Beach, Florida, powered by the Miami Marlins. Write Thunder Nation News newsletters. Tone: energetic, warm, family-oriented, proud, community-focused. Use phrases like 'Thunder Nation', 'Thunder strong', 'on the field and in life'. Youth baseball families audience. Write in plain text with ## Section headers.",
-            messages: [{ role: 'user', content: userMsg }]
-          })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: userMsg })
         });
         const data = await res.json();
-        if (data.content && data.content[0]) {
-          document.getElementById('preview-content').value = data.content[0].text;
+        if (data.text) {
+          document.getElementById('preview-content').value = data.text;
         } else if (data.error) {
-          alert('API Error: ' + (data.error.message || JSON.stringify(data.error)));
+          alert('Error: ' + data.error);
         }
       } catch(e) {
-        alert('Failed to reach API: ' + e.message);
+        alert('Failed to reach server: ' + e.message);
       }
 
       btn.disabled = false;
