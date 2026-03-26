@@ -193,6 +193,22 @@
     }
     .issue-section-body p:last-child { margin-bottom: 0; }
 
+    /* Section photo */
+    .issue-section-photo {
+      width: 100%; border-radius: 8px; margin: 16px 0 8px;
+      border: 1px solid var(--border);
+    }
+
+    /* Section divider line */
+    .issue-section-divider {
+      height: 1px; background: var(--border); margin: 0;
+    }
+
+    /* Bold text in content */
+    .issue-section-body strong {
+      color: var(--white); font-weight: 600;
+    }
+
     /* Footer block */
     .issue-footer-block {
       background: var(--surface); border-top: 2px solid var(--gold);
@@ -389,7 +405,63 @@
         const d = new Date(issue.issue_date + 'T12:00:00');
         const dateStr = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase();
 
-        const sectionsHTML = (issue.sections || []).map(s => `
+        // Build photo lookup: match photo name to section type/title
+        const photoMap = {};
+        const photoList = issue.photo_urls || [];
+        photoList.forEach(p => {
+          if (typeof p === 'object' && p.name && p.data) {
+            photoMap[p.name.toLowerCase().trim()] = p.data;
+          }
+        });
+
+        function findPhoto(sectionType, sectionTitle) {
+          const keys = Object.keys(photoMap);
+          const typeL = (sectionType || '').toLowerCase().trim();
+          const titleL = (sectionTitle || '').toLowerCase().trim();
+          // Exact match on type or title
+          if (photoMap[typeL]) return photoMap[typeL];
+          if (photoMap[titleL]) return photoMap[titleL];
+          // Partial match — photo name contained in section type/title or vice versa
+          for (const k of keys) {
+            if (typeL.includes(k) || k.includes(typeL) || titleL.includes(k) || k.includes(titleL)) {
+              return photoMap[k];
+            }
+          }
+          return null;
+        }
+
+        function formatContent(raw) {
+          return (raw || '')
+            // Strip markdown headers
+            .replace(/^#{1,4}\s*/gm, '')
+            // Convert **bold** to <strong>
+            .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+            // Convert *italic* to <em>
+            .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+            // Remove image placeholders like *[Picture: ...]* or [Picture: ...]
+            .replace(/\*?\[Picture:[^\]]*\]\*?/g, '')
+            .split('\n\n')
+            .map(p => `<p>${escHTML2(p).replace(/\n/g,'<br>')}</p>`)
+            .join('');
+        }
+
+        // escHTML that preserves already-inserted HTML tags
+        function escHTML2(str) {
+          return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            // Restore our bold/italic tags
+            .replace(/&lt;strong&gt;/g, '<strong>')
+            .replace(/&lt;\/strong&gt;/g, '</strong>')
+            .replace(/&lt;em&gt;/g, '<em>')
+            .replace(/&lt;\/em&gt;/g, '</em>');
+        }
+
+        const sectionsHTML = (issue.sections || []).map(s => {
+          const photo = findPhoto(s.type, s.title);
+          const content = formatContent(s.content);
+          return `
           <div class="issue-section">
             <div class="issue-section-header">
               <div class="issue-section-header-left">
@@ -400,11 +472,13 @@
               <div class="issue-section-bolt">${boltIcon}</div>
             </div>
             <div class="issue-section-body">
-              ${(s.content||'').split('\n\n').map(p=>`<p>${escHTML(p).replace(/\n/g,'<br>')}</p>`).join('')}
+              ${content}
+              ${photo ? `<img src="${photo}" class="issue-section-photo" alt="${escHTML(s.title || s.type)}"/>` : ''}
             </div>
           </div>
+          <div class="issue-section-divider"></div>
           ${boltDivider}
-        `).join('');
+        `}).join('');
 
         root.innerHTML = `
           <div class="issue-page">
@@ -418,11 +492,13 @@
               <span class="issue-season-badge">${escHTML(issue.season)}</span>
             </div>
 
+            ${issue.cover_photo_url ? `<img src="${issue.cover_photo_url}" style="width:100%;border-radius:8px;margin:12px 0;border:1px solid var(--border)" alt="Cover"/>` : ''}
+
             ${boltDivider}
 
             ${issue.intro_text ? `
               <div class="issue-intro-block">
-                ${issue.intro_text.split('\n\n').map(p => `<p>${escHTML(p).replace(/\n/g,'<br>')}</p>`).join('')}
+                ${formatContent(issue.intro_text)}
               </div>
               ${boltDivider}
             ` : ''}

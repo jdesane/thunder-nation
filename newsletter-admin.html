@@ -600,12 +600,16 @@
       });
     }
 
+    function photoLabel(name) {
+      return name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+    }
+
     function renderPhotos() {
       photoGrid.innerHTML = photos.map((p, i) => `
         <div class="photo-thumb">
           <img src="${p.data}" alt="${escAttr(p.name)}"/>
           <button type="button" class="photo-thumb-remove" onclick="removePhoto(${i})">&times;</button>
-          ${i === 0 ? '<div class="photo-cover-label">Cover</div>' : ''}
+          <div class="photo-cover-label">${i === 0 ? 'Cover' : escHTML(photoLabel(p.name))}</div>
         </div>
       `).join('');
     }
@@ -625,9 +629,12 @@
         `[${s.type}] ${s.title}: ${s.content}`
       ).join('\n');
 
+      const currentYear = new Date().getFullYear();
       const userMsg = `Create a Thunder Nation News newsletter.
 Title: ${title}
 Season: ${season}
+Current year: ${currentYear} (IMPORTANT: always use ${currentYear} as the year, never older years)
+Date: ${document.getElementById('issue-date').value}
 Director intro so far: ${intro}
 Sections already added: ${sectionsSummary || 'None yet'}
 Additional instructions: ${prompt || 'Write a complete newsletter with the info above.'}`;
@@ -680,17 +687,47 @@ Additional instructions: ${prompt || 'Write a complete newsletter with the info 
       if (!title) { alert('Please enter a title.'); return; }
       if (!date) { alert('Please enter a date.'); return; }
 
-      // If preview content exists but no sections, parse ## headers into sections
+      // If preview content exists but no sections, parse headers into sections
       let finalSections = sections.length > 0 ? sections : [];
       if (preview && finalSections.length === 0) {
-        const parts = preview.split(/^## /m).filter(Boolean);
-        finalSections = parts.map(part => {
-          const lines = part.split('\n');
-          const heading = lines[0].trim();
-          const content = lines.slice(1).join('\n').trim();
-          return { type: heading, title: heading, content };
-        });
+        // Split on lines that are ALL CAPS (section titles) or ## markdown headers
+        const lines = preview.split('\n');
+        let currentSection = null;
+        const parsed = [];
+        for (const line of lines) {
+          const trimmed = line.trim();
+          // Match ## or ### headers, or ALL CAPS lines (3+ chars, no lowercase)
+          const headerMatch = trimmed.match(/^#{1,4}\s*(.+)$/);
+          if (headerMatch) {
+            if (currentSection) parsed.push(currentSection);
+            const heading = headerMatch[1].replace(/\*+/g, '').trim();
+            currentSection = { type: heading, title: heading, content: '' };
+          } else if (trimmed.length > 3 && trimmed === trimmed.toUpperCase() && /[A-Z]/.test(trimmed) && !/^[^a-zA-Z]*$/.test(trimmed)) {
+            if (currentSection) parsed.push(currentSection);
+            currentSection = { type: trimmed, title: trimmed, content: '' };
+          } else if (currentSection) {
+            currentSection.content += (currentSection.content ? '\n' : '') + line;
+          }
+        }
+        if (currentSection) parsed.push(currentSection);
+        // Clean up content - trim and remove markdown artifacts
+        finalSections = parsed.map(s => ({
+          ...s,
+          content: s.content.trim()
+            .replace(/^#+\s*/gm, '')
+            .replace(/\*\*([^*]+)\*\*/g, '$1')
+            .replace(/\*([^*]+)\*/g, '$1')
+        }));
       }
+
+      // Also clean sections content of any markdown
+      finalSections = finalSections.map(s => ({
+        ...s,
+        content: (s.content || '')
+          .replace(/^#+\s*/gm, '')
+          .replace(/\*\*([^*]+)\*\*/g, '$1')
+          .replace(/\*([^*]+)\*/g, '$1')
+      }));
 
       const slug = makeSlug(title, date);
       const body = {
@@ -702,7 +739,7 @@ Additional instructions: ${prompt || 'Write a complete newsletter with the info 
         intro_text: intro || null,
         sections: finalSections,
         cover_photo_url: photos.length > 0 ? photos[0].data : null,
-        photo_urls: photos.map(p => p.data),
+        photo_urls: photos.map(p => ({ name: photoLabel(p.name), data: p.data })),
         published: publish,
         published_at: publish ? new Date().toISOString() : null,
         updated_at: new Date().toISOString()
@@ -732,7 +769,7 @@ Additional instructions: ${prompt || 'Write a complete newsletter with the info 
               <p>Your newsletter is now live.</p>
               <a href="/newsletter-issue?slug=${slug}">View Newsletter &rarr;</a>
               <br/><br/>
-              <a href="/newsletter" class="btn-gold" style="display:inline-block">&larr; Back to Newsletter</a>
+              <a href="/newsletter" class="btn-gold" style="display:inline-block;color:var(--bg)">&larr; Back to Newsletter</a>
             </div>`;
           } else {
             result.innerHTML = `<div class="success-banner">
