@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Newsletter | South Florida Thunder</title>
+  <meta name="description" content="Stay connected with Thunder Nation. Subscribe to the SFL Thunder newsletter for team updates, tournament results, event announcements, and more."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --surface2: #1a1a1a;
+      --border: #2a2a2a;
+      --gold: #FFB612;
+      --gold-dim: rgba(255,182,18,0.15);
+      --gold-br: rgba(255,182,18,0.3);
+      --gold-hi: #FFD24D;
+      --white: #ffffff;
+      --text: #e8e8e8;
+      --muted: #999999;
+      --dim: #666666;
+      --red: #e74c3c;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; height: 72px;
+      background: rgba(10,10,10,0.92); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--gold);
+      letter-spacing: 2px; display: flex; align-items: center; gap: 10px;
+    }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a {
+      font-family: 'DM Mono', monospace; font-size: 11px; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--muted); transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-dropdown { position: relative; }
+    .dropdown-trigger { cursor: pointer; }
+    .dropdown-menu {
+      display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+      background: rgba(17,17,17,0.98); backdrop-filter: blur(16px);
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 8px 0; min-width: 200px; margin-top: 12px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    }
+    .dropdown-menu::before {
+      content: ''; position: absolute; top: -12px; left: 0; right: 0; height: 12px;
+    }
+    .nav-dropdown:hover .dropdown-menu { display: block; }
+    .dropdown-menu a {
+      display: block; padding: 10px 20px; font-family: 'DM Mono', monospace;
+      font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px;
+      color: var(--muted); transition: all 0.2s; white-space: nowrap;
+    }
+    .dropdown-menu a:hover { color: var(--gold); background: rgba(255,182,18,0.05); }
+    .nav-cta {
+      background: var(--gold) !important; color: var(--bg) !important;
+      padding: 8px 20px !important; border-radius: 6px; font-weight: 600 !important;
+      transition: background 0.2s, transform 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--gold-hi) !important; transform: translateY(-1px); }
+
+    .hamburger {
+      display: none; background: none; border: none; cursor: pointer;
+      width: 28px; height: 20px; position: relative; z-index: 101;
+    }
+    .hamburger span {
+      display: block; width: 100%; height: 2px; background: var(--text);
+      position: absolute; left: 0; transition: all 0.3s;
+    }
+    .hamburger span:nth-child(1) { top: 0; }
+    .hamburger span:nth-child(2) { top: 9px; }
+    .hamburger span:nth-child(3) { top: 18px; }
+    .hamburger.open span:nth-child(1) { top: 9px; transform: rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { top: 9px; transform: rotate(-45deg); }
+
+    .mobile-menu {
+      display: none; position: fixed; top: 72px; left: 0; right: 0;
+      background: rgba(10,10,10,0.98); backdrop-filter: blur(16px);
+      padding: 24px 5%; flex-direction: column; gap: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: 'DM Mono', monospace; font-size: 13px; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--muted); padding: 8px 0;
+    }
+    .mobile-menu a:hover { color: var(--gold); }
+    .mobile-menu .nav-cta {
+      text-align: center; margin-top: 8px;
+    }
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      padding: 160px 5% 80px; text-align: center; position: relative; overflow: hidden;
+    }
+    .page-hero::before {
+      content: ''; position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(255,182,18,0.10) 0%, transparent 60%),
+        linear-gradient(180deg, var(--bg) 0%, rgba(10,10,10,0.6) 40%, var(--bg) 100%);
+      z-index: 0;
+    }
+    .page-hero::after {
+      content: ''; position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,182,18,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,182,18,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      z-index: 0;
+    }
+    .page-hero > * { position: relative; z-index: 1; }
+    .page-hero .hero-eyebrow {
+      font-family: 'DM Mono', monospace; font-size: 12px; text-transform: uppercase;
+      letter-spacing: 3px; color: var(--gold); margin-bottom: 20px;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .page-hero .hero-eyebrow::before, .page-hero .hero-eyebrow::after {
+      content: ''; width: 24px; height: 1px; background: var(--gold);
+    }
+    .page-hero h1 {
+      font-family: 'Bebas Neue', sans-serif; font-size: clamp(44px, 7vw, 80px);
+      line-height: 0.95; color: var(--white); margin-bottom: 20px; letter-spacing: 2px;
+    }
+    .page-hero h1 em { font-style: normal; color: var(--gold); }
+    .page-hero p {
+      font-size: 17px; color: var(--muted); max-width: 600px; margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* ── SECTIONS ── */
+    .section { padding: 96px 5%; }
+    .section-inner { max-width: 1200px; margin: 0 auto; }
+    .section-label {
+      font-family: 'DM Mono', monospace; font-size: 11px; text-transform: uppercase;
+      letter-spacing: 3px; color: var(--gold); margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif; font-size: clamp(36px, 5vw, 56px);
+      color: var(--white); line-height: 1.05; margin-bottom: 16px;
+    }
+    .section-title em { font-style: normal; color: var(--gold); }
+    .section-sub {
+      font-size: 16px; color: var(--muted); max-width: 600px; line-height: 1.7;
+      margin-bottom: 48px;
+    }
+
+    /* ── SUBSCRIBE FORM ── */
+    .subscribe-section { background: var(--surface); }
+    .subscribe-box {
+      max-width: 640px; margin: 0 auto; text-align: center;
+    }
+    .subscribe-form {
+      display: flex; gap: 12px; margin-top: 32px;
+    }
+    .subscribe-form input[type="email"] {
+      flex: 1; padding: 14px 20px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--surface2);
+      color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px;
+      outline: none; transition: border-color 0.2s;
+    }
+    .subscribe-form input[type="email"]::placeholder { color: var(--dim); }
+    .subscribe-form input[type="email"]:focus { border-color: var(--gold); }
+    .subscribe-form button {
+      background: var(--gold); color: var(--bg); font-family: 'DM Sans', sans-serif;
+      font-size: 15px; font-weight: 600; padding: 14px 28px; border-radius: 8px;
+      border: none; cursor: pointer; transition: all 0.25s;
+      white-space: nowrap;
+    }
+    .subscribe-form button:hover { background: var(--gold-hi); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,182,18,0.3); }
+    .subscribe-msg {
+      margin-top: 16px; font-size: 14px; min-height: 22px;
+    }
+    .subscribe-msg.success { color: var(--gold); }
+    .subscribe-msg.error { color: var(--red); }
+    .subscribe-note {
+      font-family: 'DM Mono', monospace; font-size: 11px; color: var(--dim);
+      margin-top: 12px; letter-spacing: 0.5px;
+    }
+
+    /* ── NEWSLETTER ARCHIVE ── */
+    .archive-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px;
+    }
+    .newsletter-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 32px 28px; transition: all 0.3s; position: relative; overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    .newsletter-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-hi));
+    }
+    .newsletter-card:hover { border-color: var(--gold-br); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+    .newsletter-date {
+      font-family: 'DM Mono', monospace; font-size: 11px; text-transform: uppercase;
+      letter-spacing: 2px; color: var(--gold); margin-bottom: 12px;
+    }
+    .newsletter-card h3 {
+      font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--white);
+      line-height: 1.1; margin-bottom: 12px;
+    }
+    .newsletter-card p {
+      font-size: 14px; color: var(--muted); line-height: 1.7; flex: 1;
+    }
+    .newsletter-tags {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px;
+    }
+    .newsletter-tag {
+      font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--gold); background: var(--gold-dim);
+      padding: 4px 10px; border-radius: 4px;
+    }
+    .newsletter-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'DM Mono', monospace; font-size: 11px; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--gold); margin-top: 20px;
+      transition: gap 0.2s;
+    }
+    .newsletter-card:hover .newsletter-link { gap: 10px; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center; padding: 80px 20px;
+      border: 1px dashed var(--border); border-radius: 16px;
+    }
+    .empty-state .icon { font-size: 48px; margin-bottom: 20px; }
+    .empty-state h3 {
+      font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--white);
+      margin-bottom: 12px;
+    }
+    .empty-state p { color: var(--muted); font-size: 15px; max-width: 400px; margin: 0 auto; }
+
+    /* ── BUTTONS ── */
+    .btn-primary {
+      background: var(--gold); color: var(--bg); font-family: 'DM Sans', sans-serif;
+      font-size: 15px; font-weight: 600; padding: 14px 32px; border-radius: 8px;
+      border: none; cursor: pointer; transition: all 0.25s;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-primary:hover { background: var(--gold-hi); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,182,18,0.3); }
+    .btn-outline {
+      background: transparent; color: var(--text); font-family: 'DM Sans', sans-serif;
+      font-size: 15px; font-weight: 500; padding: 14px 32px; border-radius: 8px;
+      border: 1px solid var(--border); cursor: pointer; transition: all 0.25s;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--surface); border-top: 1px solid var(--border);
+      padding: 48px 5% 32px;
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 40px; align-items: start;
+    }
+    .footer-brand {
+      font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--gold);
+      letter-spacing: 2px;
+    }
+    .footer-brand p { font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--dim); margin-top: 8px; letter-spacing: 0; }
+    .footer-links {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px 40px;
+    }
+    .footer-links a {
+      font-family: 'DM Mono', monospace; font-size: 11px; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--dim); transition: color 0.2s; padding: 4px 0;
+    }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-social { display: flex; gap: 16px; justify-content: flex-end; }
+    .footer-social a {
+      width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--dim); font-size: 14px; transition: all 0.2s;
+    }
+    .footer-social a:hover { border-color: var(--gold); color: var(--gold); }
+    .footer-copy {
+      max-width: 1200px; margin: 32px auto 0; padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-family: 'DM Mono', monospace; font-size: 10px; color: var(--dim);
+      letter-spacing: 1px; text-align: center;
+    }
+
+    /* ── ANIMATIONS ── */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s, transform 0.6s; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 0.1s; } .d2 { transition-delay: 0.2s; }
+    .d3 { transition-delay: 0.3s; } .d4 { transition-delay: 0.4s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .hamburger { display: block; }
+      .footer-inner { grid-template-columns: 1fr; gap: 24px; text-align: center; }
+      .footer-links { justify-items: center; }
+      .footer-social { justify-content: center; }
+      .section { padding: 64px 5%; }
+      .archive-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .page-hero h1 { font-size: 44px; }
+      .subscribe-form { flex-direction: column; }
+      .subscribe-form button { width: 100%; }
+      .newsletter-card { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="/" class="nav-logo">
+
+      SFL THUNDER
+    </a>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <div class="nav-dropdown">
+        <a href="/about" class="dropdown-trigger">About &#9662;</a>
+        <div class="dropdown-menu">
+          <a href="/about">Our Story</a>
+          <a href="/directory">Directory</a>
+        </div>
+      </div>
+      <div class="nav-dropdown">
+        <a href="#" class="dropdown-trigger">Join Thunder &#9662;</a>
+        <div class="dropdown-menu">
+          <a href="/team-interest">Team Interest Form</a>
+          <a href="/player-interest">Player Interest Form</a>
+        </div>
+      </div>
+      <a href="/uniforms">Uniform Packages</a>
+      <a href="/newsletter">Newsletter</a>
+      <a href="/blog">Blog</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="/">Home</a>
+    <a href="/about">Our Story</a>
+    <a href="/directory">Directory</a>
+    <a href="/team-interest">Team Interest Form</a>
+    <a href="/player-interest">Player Interest Form</a>
+    <a href="/uniforms">Uniform Packages</a>
+    <a href="/newsletter">Newsletter</a>
+    <a href="/blog">Blog</a>
+  </div>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="hero-eyebrow reveal">Thunder Nation</div>
+    <h1 class="reveal d1">Stay in the <em>Loop</em></h1>
+    <p class="reveal d2">Tournament results, roster updates, event announcements, and everything happening across Thunder Nation — delivered to your inbox.</p>
+  </section>
+
+  <!-- SUBSCRIBE -->
+  <section class="section subscribe-section">
+    <div class="section-inner">
+      <div class="subscribe-box reveal">
+        <div class="section-label">Subscribe</div>
+        <h2 class="section-title">Join the <em>Mailing List</em></h2>
+        <p style="color: var(--muted); font-size: 16px; line-height: 1.7;">Get the latest Thunder Nation news delivered straight to your inbox. No spam, just updates that matter.</p>
+        <form class="subscribe-form" id="subscribe-form">
+          <input type="email" id="subscribe-email" placeholder="your@email.com" required autocomplete="email"/>
+          <button type="submit">Subscribe</button>
+        </form>
+        <div class="subscribe-msg" id="subscribe-msg"></div>
+        <p class="subscribe-note">We respect your privacy. Unsubscribe anytime.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER ARCHIVE -->
+  <section class="section">
+    <div class="section-inner">
+      <div class="section-label reveal">Archive</div>
+      <h2 class="section-title reveal d1">Past <em>Newsletters</em></h2>
+      <p class="section-sub reveal d2">Catch up on what you missed. Browse previous editions of the Thunder Nation newsletter.</p>
+
+      <div class="archive-grid">
+
+        <a href="#" class="newsletter-card reveal">
+          <div class="newsletter-date">March 2026</div>
+          <h3>Spring Season Kickoff</h3>
+          <p>The 2026 spring season is officially underway. Get the full rundown on tournament schedules, new roster additions, and the preseason Welcome event at Roger Dean Stadium.</p>
+          <div class="newsletter-tags">
+            <span class="newsletter-tag">Season Preview</span>
+            <span class="newsletter-tag">Events</span>
+          </div>
+          <span class="newsletter-link">Read Newsletter →</span>
+        </a>
+
+        <a href="#" class="newsletter-card reveal d1">
+          <div class="newsletter-date">February 2026</div>
+          <h3>Preseason Report</h3>
+          <p>Practices are heating up across all age groups. See which teams are looking strong heading into the spring, plus details on Thundermania and our Marlins partnership events.</p>
+          <div class="newsletter-tags">
+            <span class="newsletter-tag">Preseason</span>
+            <span class="newsletter-tag">Marlins</span>
+          </div>
+          <span class="newsletter-link">Read Newsletter →</span>
+        </a>
+
+        <a href="#" class="newsletter-card reveal d2">
+          <div class="newsletter-date">January 2026</div>
+          <h3>New Year, New Goals</h3>
+          <p>A look back at the fall season highlights and what's ahead for Thunder Nation in 2026. New coaching staff introductions and tryout updates for select age groups.</p>
+          <div class="newsletter-tags">
+            <span class="newsletter-tag">Recap</span>
+            <span class="newsletter-tag">Roster Updates</span>
+          </div>
+          <span class="newsletter-link">Read Newsletter →</span>
+        </a>
+
+        <a href="#" class="newsletter-card reveal d3">
+          <div class="newsletter-date">December 2025</div>
+          <h3>Fall Season Wrap-Up</h3>
+          <p>Championship results from USSSA and Perfect Game fall tournaments. Standout performances, team MVPs, and a recap of our end-of-season celebration.</p>
+          <div class="newsletter-tags">
+            <span class="newsletter-tag">Results</span>
+            <span class="newsletter-tag">Championships</span>
+          </div>
+          <span class="newsletter-link">Read Newsletter →</span>
+        </a>
+
+        <a href="#" class="newsletter-card reveal">
+          <div class="newsletter-date">November 2025</div>
+          <h3>Tournament Trail</h3>
+          <p>Thunder teams competed in six tournaments across South Florida this month. Full results, bracket breakdowns, and photos from the road.</p>
+          <div class="newsletter-tags">
+            <span class="newsletter-tag">Tournaments</span>
+            <span class="newsletter-tag">Results</span>
+          </div>
+          <span class="newsletter-link">Read Newsletter →</span>
+        </a>
+
+        <a href="#" class="newsletter-card reveal d1">
+          <div class="newsletter-date">October 2025</div>
+          <h3>Fall Ball Begins</h3>
+          <p>The fall season is here. New teams, fresh rosters, and a loaded tournament schedule. Everything you need to know about Thunder Nation this fall.</p>
+          <div class="newsletter-tags">
+            <span class="newsletter-tag">Season Preview</span>
+            <span class="newsletter-tag">Teams</span>
+          </div>
+          <span class="newsletter-link">Read Newsletter →</span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section" style="background: var(--surface);">
+    <div class="section-inner">
+      <div class="cta-banner reveal" style="background: linear-gradient(135deg, rgba(255,182,18,0.1) 0%, rgba(255,182,18,0.03) 100%); border: 1px solid var(--gold-br); border-radius: 20px; padding: 64px 48px; text-align: center; max-width: 900px; margin: 0 auto;">
+        <h2 style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(36px, 4vw, 52px); color: var(--white); margin-bottom: 16px;">Know Someone Who Belongs in <em style="font-style: normal; color: var(--gold);">Thunder Nation</em>?</h2>
+        <p style="color: var(--muted); font-size: 16px; margin-bottom: 32px;">Share this newsletter with other baseball and softball families in South Florida.</p>
+        <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+          <a href="/player-interest" class="btn-primary">Player Interest Form</a>
+          <a href="/team-interest" class="btn-outline">Team Interest Form</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        SFL THUNDER
+        <p>South Florida Thunder<br/>North Palm Beach, FL</p>
+      </div>
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/team-interest">Team Interest</a>
+        <a href="/player-interest">Player Interest</a>
+        <a href="/uniforms">Uniforms</a>
+        <a href="/newsletter">Newsletter</a>
+        <a href="/blog">Blog</a>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="Facebook">f</a>
+        <a href="#" aria-label="Twitter">𝕏</a>
+        <a href="#" aria-label="Instagram">ig</a>
+      </div>
+    </div>
+    <div class="footer-copy">
+      © 2026 South Florida Thunder · 501(c)(3) Non-Profit · Powered by the Miami Marlins
+    </div>
+  </footer>
+
+  <script>
+    // Hamburger
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      mobileMenu.classList.toggle('open');
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        mobileMenu.classList.remove('open');
+      });
+    });
+
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Supabase config
+    const SUPABASE_URL = 'https://zyonidiybzrgklrmalbt.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5b25pZGl5YnpyZ2tscm1hbGJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MTY5NzUsImV4cCI6MjA4ODI5Mjk3NX0.5See-qjLkXA4CoJi9tNfcLAX_cdvZhPaxw8iViKM8S8';
+
+    // Subscribe form
+    const form = document.getElementById('subscribe-form');
+    const msg = document.getElementById('subscribe-msg');
+    const submitBtn = form.querySelector('button');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('subscribe-email').value.trim();
+      if (!email) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Subscribing...';
+      msg.textContent = '';
+      msg.className = 'subscribe-msg';
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/newsletter_subscribers`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ email, source: 'website' })
+        });
+
+        if (res.ok) {
+          msg.textContent = "You're in! Welcome to Thunder Nation.";
+          msg.className = 'subscribe-msg success';
+          form.reset();
+        } else if (res.status === 409) {
+          msg.textContent = "You're already subscribed!";
+          msg.className = 'subscribe-msg success';
+        } else {
+          const err = await res.json();
+          if (err.code === '23505') {
+            msg.textContent = "You're already subscribed!";
+            msg.className = 'subscribe-msg success';
+          } else {
+            msg.textContent = 'Something went wrong. Please try again.';
+            msg.className = 'subscribe-msg error';
+          }
+        }
+      } catch {
+        msg.textContent = 'Something went wrong. Please try again.';
+        msg.className = 'subscribe-msg error';
+      }
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Subscribe';
+
+      setTimeout(() => {
+        msg.textContent = '';
+        msg.className = 'subscribe-msg';
+      }, 5000);
+    });
+  </script>
+</body>
+</html>
